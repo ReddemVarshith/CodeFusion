@@ -1,0 +1,2 @@
+
+0 static files copied to '/home/varshith/Desktop/IP/CodeFusion/staticfiles'.
