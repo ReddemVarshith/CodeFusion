@@ -4,6 +4,10 @@ import cloudinary.uploader
 import cloudinary.api
 import dj_database_url
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,10 +17,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=vso*jkc&zxro@sq3jf^(6_w$@)b8cr51!^t5a_!b!1w+#8+$n"
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-fallback-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,7 +75,7 @@ WSGI_APPLICATION = "codefusion_site.wsgi.application"
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://neondb_owner:npg_59DdsrMuVUOo@ep-dry-firefly-a1wuzuny-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+        default=os.environ.get('DATABASE_URL')
     )
 }
 
@@ -118,9 +122,9 @@ MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'ds4c6c5mp',
-    'API_KEY': '563652367987464',
-    'API_SECRET': '9Y6Mi42CaciAVaWKoocpJP07Qos'
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
 }
 
 cloudinary.config(
