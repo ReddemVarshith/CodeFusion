@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero" id="home">
+    <div class="hero-content floating">
+        <h1>CodeFusion 2026</h1>
+        <p>The Ultimate College Hackathon. Where Innovation Meets Code.</p>
+        <div class="cta-group">
+            <a href="{% url 'register' %}" class="btn-primary">Register for Hack</a>
+            <a href="#details" class="btn-secondary"
+                style="color: white; margin-left: 1.5rem; text-decoration: none; border-bottom: 2px solid var(--primary); padding-bottom: 5px;">Learn
+                More</a>
+        </div>
+    </div>
+</section>
+
+<section id="details" class="details-section">
+    <h2 class="section-title">Why Join Us?</h2>
+    <div class="details-grid">
+        <div class="card detail-card revelation">
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">Spot Challenge</h3>
+            <p>On-the-spot problem statements will be revealed. No pre-built solutions, just pure skill and on-the-spot
+                thinking.</p>
+        </div>
+        <div class="card detail-card revelation">
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">Networking</h3>
+            <p>Connect with brilliant minds from various colleges and forge lifelong connections with fellow developers.
+            </p>
+        </div>
+        <div class="card detail-card revelation">
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">Exciting Prizes</h3>
+            <p>Compete for amazing rewards and prestige. The winners take it all!</p>
+        </div>
+        <div class="card detail-card revelation">
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">Food & Fun</h3>
+            <p>Midnight snacks, coffee, and energy drinks to keep your brain firing at 100% capacity.</p>
+        </div>
+    </div>
+</section>
+
+<section class="collaboration revelation">
+    <div class="card" style="display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <h2 style="color: var(--primary); margin-bottom: 1.5rem;">Collaborate & Innovate</h2>
+            <p>CodeFusion is more than just a competition. It's a platform to build, learn, and showcase your technical
+                prowess. Work in teams of 3-5 and turn your ideas into functional prototypes within 8 hours.</p>
+        </div>
+        <div style="flex: 1; min-width: 300px; border-radius: 20px; overflow: hidden;">
+            <img src="/static/images/collaboration_neon_concept_1773935277865.png" alt="Collaboration Concept"
+                style="width: 100%; height: auto;">
+        </div>
+    </div>
+</section>
+
+<section class="timeline-section revelation">
+    <h2 class="section-title">Event Timeline</h2>
+    <div class="timeline">
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <h3>March 20, 2026</h3>
+                <p>Registration Opens - Early bird spots available.</p>
+            </div>
+        </div>
+        <div class="timeline-item right">
+            <div class="timeline-content">
+                <h3>April 15, 2026</h3>
+                <p>Registration Closes - Final day to secure your spot.</p>
+            </div>
+        </div>
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <h3>April 18, 2026</h3>
+                <p>9:00 AM - Hackathon Kickoff & Problem Statement Reveal.</p>
+            </div>
+        </div>
+        <div class="timeline-item right">
+            <div class="timeline-content">
+                <h3>April 18, 2026</h3>
+                <p>1:00 PM - Halfway Point & Tech Support Check-in.</p>
+            </div>
+        </div>
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <h3>April 18, 2026</h3>
+                <p>5:00 PM - Final Demos & Closing Ceremony.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq-section revelation">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="card">
+        <div class="faq-item">
+            <p class="faq-question">What is the registration fee?</p>
+            <p>The participation fee is ₹399 per head, which covers your entry, utilities, and refreshments.</p>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+        <div class="faq-item">
+            <p class="faq-question">Who can participate?</p>
+            <p>Any student currently enrolled in a college can participate. Team size must be between 3 to 5 members.
+            </p>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+        <div class="faq-item">
+            <p class="faq-question">What should I bring?</p>
+            <p>Bring your laptops, chargers, and any hardware components you might need for your project. We'll provide
+                the rest!</p>
+        </div>
+    </div>
+</section>
+
+<section class="info-section revelation">
+    <div class="card" style="text-align: center; border: 2px solid var(--secondary);">
+        <h2>Join the Fusion.</h2>
+        <p style="margin: 2rem 0; font-size: 1.1rem;">Be a part of the most awaited hackathon of 2026. Limited slots
+            available!</p>
+        <a href="{% url 'register' %}" class="btn-primary">Claim Your Spot</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener('preloaderComplete', () => {
+        // Hero Animation
+        gsap.from(".hero h1", {
+            y: 100,
+            opacity: 0,
+            duration: 1.5,
+            ease: "power4.out"
+        });
+
+        gsap.from(".hero p", {
+            y: 50,
+            opacity: 0,
+            duration: 1.5,
+            delay: 0.3,
+            ease: "power4.out"
+        });
+
+        gsap.from(".cta-group", {
+            y: 30,
+            opacity: 0,
+            duration: 1,
+            delay: 0.6,
+            ease: "power4.out"
+        });
+
+        // Reveal animations on scroll
+        gsap.utils.toArray(".revelation").forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 60,
+                opacity: 0,
+                duration: 0.8,
+                delay: i * 0.1,
+                ease: "back.out(1.7)"
+            });
+        });
+    });
+</script>
+{% endblock %}
