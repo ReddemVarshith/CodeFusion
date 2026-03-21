@@ -201,16 +201,19 @@
         btn.classList.add('is-open');
         activeWrap = wrap;
 
-        // Wire option clicks — use mousedown so it fires before the document
-        // mousedown listener that closes the popup, avoiding a race condition
+        // Wire option clicks — use click for better mobile/touch compatibility
         popup.querySelectorAll('.cs-opt').forEach(opt => {
-            opt.addEventListener('mousedown', e => {
-                e.preventDefault(); // prevent focus loss on the button
+            opt.addEventListener('click', e => {
+                e.preventDefault();
                 e.stopPropagation();
                 wrap.querySelector('input[type=hidden]').value = opt.dataset.val;
                 wrap.querySelector('.cs-val').textContent = opt.textContent;
                 const cb = wrap.dataset.onchange;
-                if (cb && window[cb]) window[cb]();
+                if (cb && window[cb]) {
+                    // Decouple heavy DOM manipulation from the event handler
+                    // to keep the UI responsive on mobile devices
+                    setTimeout(() => window[cb](), 0);
+                }
                 closePopup();
             });
         });
@@ -228,10 +231,10 @@
         const r = activeWrap.querySelector('.cs-btn').getBoundingClientRect();
         popup.style.top = (r.bottom + 4) + 'px';
         popup.style.left = r.left + 'px';
-    }, true);
+    });
 
-    // Close on outside click — use mousedown so it fires before option's mousedown
-    document.addEventListener('mousedown', e => {
+    // Close on outside click
+    document.addEventListener('click', e => {
         if (activeWrap && !activeWrap.contains(e.target) && !popup.contains(e.target)) {
             closePopup();
         }
