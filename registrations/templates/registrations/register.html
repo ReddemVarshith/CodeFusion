@@ -201,9 +201,11 @@
         btn.classList.add('is-open');
         activeWrap = wrap;
 
-        // Wire option clicks
+        // Wire option clicks — use mousedown so it fires before the document
+        // mousedown listener that closes the popup, avoiding a race condition
         popup.querySelectorAll('.cs-opt').forEach(opt => {
-            opt.addEventListener('click', e => {
+            opt.addEventListener('mousedown', e => {
+                e.preventDefault(); // prevent focus loss on the button
                 e.stopPropagation();
                 wrap.querySelector('input[type=hidden]').value = opt.dataset.val;
                 wrap.querySelector('.cs-val').textContent = opt.textContent;
@@ -228,8 +230,12 @@
         popup.style.left = r.left + 'px';
     }, true);
 
-    // Close on outside click
-    document.addEventListener('click', closePopup);
+    // Close on outside click — use mousedown so it fires before option's mousedown
+    document.addEventListener('mousedown', e => {
+        if (activeWrap && !activeWrap.contains(e.target) && !popup.contains(e.target)) {
+            closePopup();
+        }
+    });
 
     // Wire all .cs-wrap elements
     function initWraps(root) {
@@ -296,7 +302,13 @@
         }
         membersContainer.innerHTML = html;
         initWraps(membersContainer);
-        gsap.from('.member-section', { y: 20, opacity: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' });
+        // Kill any running animations on member sections before starting new ones
+        // so re-selecting team size doesn't leave elements invisible
+        gsap.killTweensOf('.member-section');
+        gsap.fromTo('.member-section',
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, ease: 'power2.out', clearProps: 'all' }
+        );
     }
 
     /* ═══════════════════════════════════════════════
