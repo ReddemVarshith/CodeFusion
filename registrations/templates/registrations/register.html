@@ -289,12 +289,21 @@
             if (native) {
                 native.addEventListener('change', () => {
                     hidden.value = native.value;
-                    const option = JSON.parse(wrap.dataset.options).find(o => o.val === native.value);
-                    if (option) valSpan.textContent = option.label;
+                    const optionsRaw = wrap.dataset.options;
+                    if (optionsRaw) {
+                        try {
+                            const option = JSON.parse(optionsRaw).find(o => o.val === native.value);
+                            if (option) valSpan.textContent = option.label;
+                        } catch (e) {
+                            console.error("Invalid options JSON", e);
+                        }
+                    }
 
                     const cb = wrap.dataset.onchange;
                     if (cb && window[cb]) {
-                        setTimeout(() => window[cb](), 0);
+                        // Use a slightly longer delay (100ms) to ensure the native mobile picker 
+                        // has fully closed and the browser layout is stable before heavy updates.
+                        setTimeout(() => window[cb](), 100);
                     }
                 });
             }
@@ -329,19 +338,24 @@
     }
 
     function updateMembers() {
-        const targetSize = getTeamSize();
-        totalAmountSpan.innerText = `₹${targetSize * 399}`;
+        const container = document.getElementById('members-container') || membersContainer;
+        const totalSpan = document.getElementById('total-amount') || totalAmountSpan;
+        if (!container || !totalSpan) return;
 
-        let currentSections = membersContainer.querySelectorAll('.member-section');
+        const targetSize = getTeamSize();
+        totalSpan.innerText = `₹${targetSize * 399}`;
+
+        let currentSections = container.querySelectorAll('.member-section');
         let currentSize = currentSections.length;
 
         if (currentSize === targetSize) return;
 
         if (currentSize < targetSize) {
-            // Add sections incrementally
+            // Bulk add sections
+            let newHtml = '';
             for (let i = currentSize + 1; i <= targetSize; i++) {
-                const sectionHtml = `
-            <div class="member-section" style="opacity:0; transform:translateY(20px);">
+                newHtml += `
+            <div class="member-section" style="opacity:1;">
                 <h4 style="margin-bottom:1rem;color:var(--secondary);">Member ${i}${i === 1 ? ' (Team Lead)' : ''}</h4>
                 <div class="member-card"><div class="details-grid">
                     <div class="form-group"><label>Full Name</label><input type="text" name="member_name_${i}" required placeholder="Name"></div>
@@ -362,15 +376,19 @@
                     <div class="form-group"><label>T-shirt Size</label>${buildTshirtCS(`member_tshirt_${i}`)}</div>
                 </div></div>
             </div>`;
-                membersContainer.insertAdjacentHTML('beforeend', sectionHtml);
-                const newSection = membersContainer.lastElementChild;
-                initWraps(newSection);
-                gsap.to(newSection, { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out', clearProps: 'all' });
+            }
+            container.insertAdjacentHTML('beforeend', newHtml);
+
+            // Re-identify the newly added sections and init their wraps
+            const updatedSections = container.querySelectorAll('.member-section');
+            for (let j = currentSize; j < updatedSections.length; j++) {
+                initWraps(updatedSections[j]);
             }
         } else {
             // Remove sections from the end
             for (let i = currentSize; i > targetSize; i--) {
-                membersContainer.lastElementChild.remove();
+                const last = container.lastElementChild;
+                if (last) last.remove();
             }
         }
     }
