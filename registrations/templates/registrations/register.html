@@ -77,6 +77,35 @@
         font-weight: 600;
         background: rgba(0, 242, 255, 0.07);
     }
+
+    /* ── Native Select — only for mobile ── */
+    .cs-native {
+        display: none;
+        width: 100%;
+        padding: 1rem;
+        background: #0a0a0f;
+        border: 1px solid rgba(0, 242, 255, 0.3);
+        border-left: 3px solid var(--primary);
+        border-radius: 10px;
+        color: white;
+        font-family: inherit;
+        font-size: 1rem;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300f2ff' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+
+    @media (max-width: 768px) {
+        .cs-btn {
+            display: none !important;
+        }
+
+        .cs-native {
+            display: block !important;
+        }
+    }
 </style>
 
 <!-- Single shared popup element in body -->
@@ -106,6 +135,11 @@
                     <input type="hidden" name="team_size" value="3">
                     <button type="button" class="cs-btn"><span class="cs-val">3 Members</span><span
                             class="cs-arrow"></span></button>
+                    <select class="cs-native">
+                        <option value="3">3 Members</option>
+                        <option value="4">4 Members</option>
+                        <option value="5">5 Members</option>
+                    </select>
                 </div>
             </div>
 
@@ -240,10 +274,30 @@
     // Wire all .cs-wrap elements
     function initWraps(root) {
         root.querySelectorAll('.cs-wrap').forEach(wrap => {
-            wrap.querySelector('.cs-btn').addEventListener('click', e => {
+            const btn = wrap.querySelector('.cs-btn');
+            const native = wrap.querySelector('.cs-native');
+            const hidden = wrap.querySelector('input[type=hidden]');
+            const valSpan = wrap.querySelector('.cs-val');
+
+            // Custom flow (Desktop)
+            btn.addEventListener('click', e => {
                 e.stopPropagation();
                 activeWrap === wrap ? closePopup() : openPopup(wrap);
             });
+
+            // Native flow (Mobile)
+            if (native) {
+                native.addEventListener('change', () => {
+                    hidden.value = native.value;
+                    const option = JSON.parse(wrap.dataset.options).find(o => o.val === native.value);
+                    if (option) valSpan.textContent = option.label;
+
+                    const cb = wrap.dataset.onchange;
+                    if (cb && window[cb]) {
+                        setTimeout(() => window[cb](), 0);
+                    }
+                });
+            }
         });
     }
 
@@ -258,6 +312,9 @@
     <div class="cs-wrap" data-options='${tsOpts}' data-name="${name}">
         <input type="hidden" name="${name}" value="S">
         <button type="button" class="cs-btn"><span class="cs-val">S</span><span class="cs-arrow"></span></button>
+        <select class="cs-native">
+            ${TSIZES.map(s => `<option value="${s}">${s}</option>`).join('')}
+        </select>
     </div>`;
     }
 
