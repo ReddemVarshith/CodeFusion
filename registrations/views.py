@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib import messages
 from .models import Team, TeamMember
+import cloudinary.uploader
 
 def home(request):
     return render(request, 'registrations/home.html')
@@ -20,10 +21,14 @@ def register(request):
                     messages.error(request, f"Team name '{team_name}' already exists! Please choose another one.")
                     return redirect('register')
 
+                # Upload to Cloudinary manually to get the secure URL
+                upload_result = cloudinary.uploader.upload(payment_proof)
+                payment_proof_url = upload_result.get('secure_url')
+
                 team = Team.objects.create(
                     team_name=team_name,
                     team_size=team_size,
-                    payment_proof=payment_proof,
+                    payment_proof=payment_proof_url,
                     utr_id=utr_id
                 )
 
