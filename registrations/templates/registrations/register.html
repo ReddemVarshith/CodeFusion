@@ -400,16 +400,16 @@
         initWraps(document);
         updateMembers();
 
-        gsap.fromTo('#registration-card',
-            { scale: 0.95, opacity: 0 },
-            {
-                scale: 1, opacity: 1, duration: 0.8, ease: 'power3.out',
-                onComplete: () => gsap.set('#registration-card', { clearProps: 'transform' })
-            }
-        );
-        gsap.fromTo('.slide-up',
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power2.out', delay: 0.4 });
+        // Show card and elements immediately to prevent "lag" or "freezing" on mobile
+        const card = document.getElementById('registration-card');
+        if (card) {
+            card.style.opacity = '1';
+            card.style.transform = 'none';
+        }
+        document.querySelectorAll('.slide-up').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+        });
 
         // UTR guide
         const viewBtn = document.getElementById('view-guide-btn');
@@ -418,16 +418,11 @@
 
         viewBtn.addEventListener('click', () => {
             guide.style.display = 'block';
-            gsap.fromTo(guide, { height: 0, opacity: 0, overflow: 'hidden' }, { height: 'auto', opacity: 1, duration: 0.5, ease: 'power2.out' });
             viewBtn.style.display = 'none';
         });
         closeBtn.addEventListener('click', () => {
-            gsap.to(guide, {
-                height: 0, opacity: 0, duration: 0.4, ease: 'power2.in', onComplete: () => {
-                    guide.style.display = 'none';
-                    viewBtn.style.display = 'block';
-                }
-            });
+            guide.style.display = 'none';
+            viewBtn.style.display = 'block';
         });
     });
 </script>
