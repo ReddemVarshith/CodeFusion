@@ -34,7 +34,7 @@ def register(request):
 
                 import re
                 phone_pattern = re.compile(r'^[6-9]\d{9}$')
-                college_code_pattern = re.compile(r'^[A-Z]+$')
+                college_code_pattern = re.compile(r'^[A-Z0-9]+$')
 
                 for i in range(1, team_size + 1):
                     phone_number = request.POST.get(f'member_phone_{i}')
@@ -45,7 +45,7 @@ def register(request):
                         return redirect('register')
                     
                     if not college_code_pattern.match(college_code):
-                        messages.error(request, f"Invalid college code for Member {i}. Must contain only capital letters.")
+                        messages.error(request, f"Invalid college code for Member {i}. Must contain only capital letters and numbers.")
                         return redirect('register')
 
                     TeamMember.objects.create(

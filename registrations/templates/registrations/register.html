@@ -362,8 +362,8 @@
                     <div class="form-group"><label>Roll No</label><input type="text" name="member_roll_${i}" required placeholder="Roll No"></div>
                     <div class="form-group"><label>College Code</label>
                         <input type="text" name="member_cc_${i}" required placeholder="College Code"
-                            pattern="[A-Z]+" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'');"
-                            title="Capital letters only">
+                            pattern="[A-Z0-9]+" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');"
+                            title="Capital letters and numbers only">
                     </div>
                     <div class="form-group"><label>College Name</label><input type="text" name="member_college_${i}" required placeholder="College Name"></div>
                     <div class="form-group"><label>Phone Number</label>

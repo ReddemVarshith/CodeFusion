@@ -28,8 +28,8 @@ class TeamMember(models.Model):
     )
     
     college_code_regex = RegexValidator(
-        regex=r'^[A-Z]+$',
-        message="College code must contain only capital letters."
+        regex=r'^[A-Z0-9]+$',
+        message="College code must contain only capital letters and numbers."
     )
     
     team = models.ForeignKey(Team, related_name='members', on_delete=models.CASCADE)
