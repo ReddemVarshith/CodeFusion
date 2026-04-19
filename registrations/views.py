@@ -21,6 +21,11 @@ def register(request):
                     messages.error(request, f"Team name '{team_name}' already exists! Please choose another one.")
                     return redirect('register')
 
+                # Check for existing UTR ID
+                if utr_id and Team.objects.filter(utr_id=utr_id).exists():
+                    messages.error(request, "UTR ID already exists! Please enter a valid one.")
+                    return redirect('register')
+
                 # Upload to Cloudinary manually to get the secure URL
                 upload_result = cloudinary.uploader.upload(payment_proof)
                 payment_proof_url = upload_result.get('secure_url')
